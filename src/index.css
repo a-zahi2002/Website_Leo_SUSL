@@ -1,16 +1,18 @@
 @import "tailwindcss";
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
-/* Force dark mode variant to use the class strategy if config doesn't pick it up immediately in v4 alpha */
-@variant dark (&:where(.dark, .dark *));
+@theme {
+  --color-leo-gold: #FDBE15;
+  --color-leo-maroon: #800000;
+  --color-leo-maroon-dark: #A01010;
+}
+
+@variant dark (&:is(.dark *));
 
 :root {
   font-family: 'Inter', sans-serif;
 
-  /* Theme Colors */
-  --color-leo-gold: #FDBE15;
-  --color-leo-maroon: #800000;
-
+  /* Light Mode Defaults */
   --bg-primary: #f8fafc;
   --bg-secondary: #ffffff;
   --text-primary: #1e293b;
