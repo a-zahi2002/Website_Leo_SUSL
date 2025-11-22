@@ -43,7 +43,7 @@ const Navbar = () => {
             className="w-12 h-12 md:w-14 md:h-14 object-contain drop-shadow-md" 
           />
           <div className={`font-bold tracking-tighter flex flex-col leading-tight ${scrolled ? 'text-[var(--color-leo-maroon)] dark:text-white' : 'text-white'}`}>
-             <span className="text-xl md:text-2xl">LEO CLUB OF</span>
+             <span className="text-xl md:text-2xl">LEO CLUB</span>
              <span className="text-xs md:text-sm font-medium opacity-90">Sabaragamuwa University of Sri Lanka</span>
           </div>
         </div>
