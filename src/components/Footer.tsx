@@ -1,0 +1,24 @@
+import { Heart } from 'lucide-react';
+
+const Footer = () => {
+  return (
+    <footer className="bg-slate-900 text-white py-8 border-t border-white/10">
+      <div className="container mx-auto px-6 flex flex-col md:flex-row justify-between items-center">
+        <div className="mb-4 md:mb-0 text-center md:text-left">
+          <p className="font-bold text-lg">Leo Club of [City Name]</p>
+          <p className="text-sm text-gray-400">Sponsored by Lions Club of [City Name]</p>
+        </div>
+        
+        <div className="flex items-center text-sm text-gray-400">
+          <span>&copy; {new Date().getFullYear()} All Rights Reserved.</span>
+          <span className="mx-2">|</span>
+          <span className="flex items-center">
+            Made with <Heart size={14} className="mx-1 text-[var(--color-leo-gold)]" fill="#FDBE15" /> by Leo Club
+          </span>
+        </div>
+      </div>
+    </footer>
+  );
+};
+
+export default Footer;
