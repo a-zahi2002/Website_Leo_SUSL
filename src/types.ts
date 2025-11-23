@@ -1,3 +1,26 @@
+// Database types (matching Supabase schema)
+export interface ProjectDB {
+    id: number;
+    title: string;
+    category: 'Completed' | 'Ongoing' | 'Upcoming';
+    description: string;
+    image_url: string;
+    project_date: string | null;
+    recruitment_link: string | null;
+    created_at: string;
+}
+
+export interface LeadershipMemberDB {
+    id: number;
+    name: string;
+    position: string;
+    role_type: 'Executive' | 'Board';
+    image_url: string;
+    year: string;
+    created_at: string;
+}
+
+// Frontend types (for component usage)
 export interface Project {
     id: number;
     title: string;
@@ -11,11 +34,12 @@ export interface Project {
 }
 
 export interface LeadershipMember {
-    id: number; // Added ID for management
+    id: number;
     name: string;
     position: string;
     image: string;
-    type: 'executive' | 'board'; // To distinguish in the single list if needed, or keep separate arrays
+    type: 'executive' | 'board';
+    year?: string;
 }
 
 export interface GalleryImage {

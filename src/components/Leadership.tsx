@@ -1,8 +1,40 @@
 import { motion } from 'framer-motion';
 import { useData } from '../context/DataContext';
+import { Loader2 } from 'lucide-react';
 
 const Leadership = () => {
-  const { leadership } = useData();
+  const { leadership, loading, error } = useData();
+
+  if (loading) {
+    return (
+      <section id="leadership" className="py-20 bg-white dark:bg-slate-900 transition-colors duration-300">
+        <div className="container mx-auto px-6">
+          <div className="flex flex-col items-center justify-center min-h-[400px]">
+            <Loader2 className="w-12 h-12 text-[var(--color-leo-maroon)] animate-spin mb-4" />
+            <p className="text-gray-600 dark:text-gray-400">Loading leadership...</p>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  if (error) {
+    return (
+      <section id="leadership" className="py-20 bg-white dark:bg-slate-900 transition-colors duration-300">
+        <div className="container mx-auto px-6">
+          <div className="flex flex-col items-center justify-center min-h-[400px]">
+            <p className="text-red-600 dark:text-red-400 mb-4">{error}</p>
+            <button 
+              onClick={() => window.location.reload()} 
+              className="px-6 py-2 bg-[var(--color-leo-maroon)] text-white rounded-lg hover:bg-red-900 transition-colors"
+            >
+              Retry
+            </button>
+          </div>
+        </div>
+      </section>
+    );
+  }
   return (
     <section id="leadership" className="py-20 bg-white dark:bg-slate-900 transition-colors duration-300">
       <div className="container mx-auto px-6">

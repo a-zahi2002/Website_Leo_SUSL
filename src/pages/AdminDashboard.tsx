@@ -1,13 +1,13 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, Plus, Edit, Trash2, Users, FolderOpen, Image, X, Save } from 'lucide-react';
+import { ArrowLeft, Plus, Edit, Trash2, Users, FolderOpen, Image, X, Save, Loader2 } from 'lucide-react';
 import { useData } from '../context/DataContext';
 import type { Project, LeadershipMember, GalleryImage } from '../types';
 
 const AdminDashboard = () => {
   const navigate = useNavigate();
   const { 
-    projects, leadership, gallery, 
+    projects, leadership, gallery,
     addProject, updateProject, deleteProject,
     addMember, updateMember, deleteMember,
     addImage, deleteImage
@@ -16,6 +16,7 @@ const AdminDashboard = () => {
   const [activeTab, setActiveTab] = useState<'projects' | 'leadership' | 'gallery'>('projects');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingItem, setEditingItem] = useState<any>(null);
+  const [submitting, setSubmitting] = useState(false);
 
   // Form States
   const [projectForm, setProjectForm] = useState<Partial<Project>>({ category: 'Upcoming', status: 'Active' });
@@ -38,27 +39,52 @@ const AdminDashboard = () => {
     setIsModalOpen(true);
   };
 
-  const handleDeleteClick = (id: number, type?: 'executive' | 'board') => {
-    if (window.confirm('Are you sure you want to delete this item?')) {
-      if (activeTab === 'projects') deleteProject(id);
-      if (activeTab === 'leadership' && type) deleteMember(id, type);
+  const handleDeleteClick = async (id: number, type?: 'executive' | 'board') => {
+    if (!window.confirm('Are you sure you want to delete this item?')) return;
+
+    try {
+      if (activeTab === 'projects') await deleteProject(id);
+      if (activeTab === 'leadership' && type) await deleteMember(id, type);
       if (activeTab === 'gallery') deleteImage(id);
+    } catch (error) {
+      console.error('Error deleting item:', error);
+      alert('Failed to delete item. Please try again.');
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (activeTab === 'projects') {
-      if (editingItem) updateProject(projectForm as Project);
-      else addProject(projectForm as Omit<Project, 'id'>);
-    } else if (activeTab === 'leadership') {
-      if (editingItem) updateMember(memberForm as LeadershipMember, memberForm.type as 'executive' | 'board');
-      else addMember(memberForm as Omit<LeadershipMember, 'id'>, memberForm.type as 'executive' | 'board');
-    } else if (activeTab === 'gallery') {
-      if (editingItem) { /* Gallery update not really needed, usually just add/delete */ }
-      else addImage(imageForm as Omit<GalleryImage, 'id'>);
+    setSubmitting(true);
+
+    try {
+      if (activeTab === 'projects') {
+        if (editingItem) {
+          await updateProject(projectForm as Project);
+        } else {
+          await addProject(projectForm as Omit<Project, 'id'>);
+        }
+      } else if (activeTab === 'leadership') {
+        if (editingItem) {
+          await updateMember(memberForm as LeadershipMember, memberForm.type as 'executive' | 'board');
+        } else {
+          await addMember(memberForm as Omit<LeadershipMember, 'id'>, memberForm.type as 'executive' | 'board');
+        }
+      } else if (activeTab === 'gallery') {
+        if (!editingItem) {
+          addImage(imageForm as Omit<GalleryImage, 'id'>);
+        }
+      }
+      
+      setIsModalOpen(false);
+      setProjectForm({ category: 'Upcoming', status: 'Active' });
+      setMemberForm({ type: 'executive' });
+      setImageForm({});
+    } catch (error) {
+      console.error('Error saving item:', error);
+      alert('Failed to save item. Please try again.');
+    } finally {
+      setSubmitting(false);
     }
-    setIsModalOpen(false);
   };
 
   return (
@@ -383,15 +409,27 @@ const AdminDashboard = () => {
                 <button 
                   type="button"
                   onClick={() => setIsModalOpen(false)}
-                  className="px-4 py-2 rounded-lg text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-slate-700 transition-colors"
+                  disabled={submitting}
+                  className="px-4 py-2 rounded-lg text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-slate-700 transition-colors disabled:opacity-50"
                 >
                   Cancel
                 </button>
                 <button 
                   type="submit"
-                  className="px-6 py-2 rounded-lg bg-[var(--color-leo-maroon)] text-white font-bold hover:bg-red-900 transition-colors flex items-center gap-2"
+                  disabled={submitting}
+                  className="px-6 py-2 rounded-lg bg-[var(--color-leo-maroon)] text-white font-bold hover:bg-red-900 transition-colors flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  <Save size={18} /> Save Changes
+                  {submitting ? (
+                    <>
+                      <Loader2 size={18} className="animate-spin" />
+                      Saving...
+                    </>
+                  ) : (
+                    <>
+                      <Save size={18} />
+                      Save Changes
+                    </>
+                  )}
                 </button>
               </div>
             </form>
